@@ -15,211 +15,211 @@ def home():
     return render_template("index.html")
 
 
-def render_cipher_page(cipher_name, cipher_url, result=None, input_text=None, key=None):
-    return render_template(
-        "cipher_form.html",
-        cipher_name=cipher_name,
-        cipher_url=cipher_url,
-        result=result,
-        input_text=input_text,
-        key=key
-    )
-
-
-def call_method(obj, method_names, *args):
-    for method_name in method_names:
-        if hasattr(obj, method_name):
-            method = getattr(obj, method_name)
-            return method(*args)
-
-    raise Exception("Không tìm thấy hàm mã hóa/giải mã phù hợp trong class.")
-
-
 # =========================
-# CAESAR CIPHER
+# CAESAR
 # =========================
 
 @app.route("/caesar")
 def caesar():
-    return render_cipher_page("CAESAR CIPHER", "caesar")
+    return render_template("caesar.html")
 
 
-@app.route("/caesar/encrypt", methods=["POST"])
-def caesar_encrypt():
-    text = request.form["plain_text"]
-    key = int(request.form["key"])
+@app.route("/encrypt", methods=["POST"])
+def caesar_encrypt_old():
+    text = request.form["inputPlainText"]
+    key = int(request.form["inputKeyPlain"])
 
-    cipher = CaesarCipher()
-    result = call_method(
-        cipher,
-        ["encrypt_text", "encrypt"],
-        text,
-        key
+    caesar_cipher = CaesarCipher()
+    encrypted_text = caesar_cipher.encrypt_text(text, key)
+
+    return render_template(
+        "caesar.html",
+        text=text,
+        key=key,
+        result=encrypted_text
     )
 
-    return render_cipher_page("CAESAR CIPHER", "caesar", result, text, key)
 
+@app.route("/decrypt", methods=["POST"])
+def caesar_decrypt_old():
+    text = request.form["inputCipherText"]
+    key = int(request.form["inputKeyCipher"])
 
-@app.route("/caesar/decrypt", methods=["POST"])
-def caesar_decrypt():
-    text = request.form["cipher_text"]
-    key = int(request.form["key"])
+    caesar_cipher = CaesarCipher()
+    decrypted_text = caesar_cipher.decrypt_text(text, key)
 
-    cipher = CaesarCipher()
-    result = call_method(
-        cipher,
-        ["decrypt_text", "decrypt"],
-        text,
-        key
+    return render_template(
+        "caesar.html",
+        text=text,
+        key=key,
+        result=decrypted_text
     )
-
-    return render_cipher_page("CAESAR CIPHER", "caesar", result, text, key)
 
 
 # =========================
-# VIGENERE CIPHER
+# VIGENERE
 # =========================
 
 @app.route("/vigenere")
 def vigenere():
-    return render_cipher_page("VIGENERE CIPHER", "vigenere")
+    return render_template("vigenere.html")
 
 
 @app.route("/vigenere/encrypt", methods=["POST"])
 def vigenere_encrypt():
-    text = request.form["plain_text"]
-    key = request.form["key"]
+    text = request.form["inputPlainText"]
+    key = request.form["inputKeyPlain"]
 
-    cipher = VigenereCipher()
-    result = call_method(
-        cipher,
-        ["vigenere_encrypt", "encrypt_text", "encrypt"],
-        text,
-        key
+    vigenere_cipher = VigenereCipher()
+    encrypted_text = vigenere_cipher.vigenere_encrypt(text, key)
+
+    return render_template(
+        "vigenere.html",
+        text=text,
+        key=key,
+        result=encrypted_text
     )
-
-    return render_cipher_page("VIGENERE CIPHER", "vigenere", result, text, key)
 
 
 @app.route("/vigenere/decrypt", methods=["POST"])
 def vigenere_decrypt():
-    text = request.form["cipher_text"]
-    key = request.form["key"]
+    text = request.form["inputCipherText"]
+    key = request.form["inputKeyCipher"]
 
-    cipher = VigenereCipher()
-    result = call_method(
-        cipher,
-        ["vigenere_decrypt", "decrypt_text", "decrypt"],
-        text,
-        key
+    vigenere_cipher = VigenereCipher()
+    decrypted_text = vigenere_cipher.vigenere_decrypt(text, key)
+
+    return render_template(
+        "vigenere.html",
+        text=text,
+        key=key,
+        result=decrypted_text
     )
-
-    return render_cipher_page("VIGENERE CIPHER", "vigenere", result, text, key)
 
 
 # =========================
-# RAIL FENCE CIPHER
+# RAIL FENCE
 # =========================
 
 @app.route("/railfence")
 def railfence():
-    return render_cipher_page("RAIL FENCE CIPHER", "railfence")
+    return render_template("railfence.html")
 
 
 @app.route("/railfence/encrypt", methods=["POST"])
 def railfence_encrypt():
-    text = request.form["plain_text"]
-    key = int(request.form["key"])
+    text = request.form["inputPlainText"]
+    key = int(request.form["inputKeyPlain"])
 
-    cipher = RailFenceCipher()
-    result = call_method(
-        cipher,
-        ["rail_fence_encrypt", "encrypt_text", "encrypt"],
-        text,
-        key
+    railfence_cipher = RailFenceCipher()
+    encrypted_text = railfence_cipher.rail_fence_encrypt(text, key)
+
+    return render_template(
+        "railfence.html",
+        text=text,
+        key=key,
+        result=encrypted_text
     )
-
-    return render_cipher_page("RAIL FENCE CIPHER", "railfence", result, text, key)
 
 
 @app.route("/railfence/decrypt", methods=["POST"])
 def railfence_decrypt():
-    text = request.form["cipher_text"]
-    key = int(request.form["key"])
+    text = request.form["inputCipherText"]
+    key = int(request.form["inputKeyCipher"])
 
-    cipher = RailFenceCipher()
-    result = call_method(
-        cipher,
-        ["rail_fence_decrypt", "decrypt_text", "decrypt"],
-        text,
-        key
+    railfence_cipher = RailFenceCipher()
+    decrypted_text = railfence_cipher.rail_fence_decrypt(text, key)
+
+    return render_template(
+        "railfence.html",
+        text=text,
+        key=key,
+        result=decrypted_text
     )
-
-    return render_cipher_page("RAIL FENCE CIPHER", "railfence", result, text, key)
 
 
 # =========================
-# PLAYFAIR CIPHER
+# PLAYFAIR
 # =========================
 
 @app.route("/playfair")
 def playfair():
-    return render_cipher_page("PLAYFAIR CIPHER", "playfair")
+    return render_template("playfair.html")
 
 
 @app.route("/playfair/encrypt", methods=["POST"])
 def playfair_encrypt():
-    text = request.form["plain_text"]
-    key = request.form["key"]
+    text = request.form["inputPlainText"]
+    key = request.form["inputKeyPlain"]
 
-    cipher = PlayFairCipher()
-    matrix = cipher.create_playfair_matrix(key)
-    result = cipher.playfair_encrypt(text, matrix)
+    playfair_cipher = PlayFairCipher()
+    playfair_matrix = playfair_cipher.create_playfair_matrix(key)
+    encrypted_text = playfair_cipher.playfair_encrypt(text, playfair_matrix)
 
-    return render_cipher_page("PLAYFAIR CIPHER", "playfair", result, text, key)
+    return render_template(
+        "playfair.html",
+        text=text,
+        key=key,
+        result=encrypted_text
+    )
 
 
 @app.route("/playfair/decrypt", methods=["POST"])
 def playfair_decrypt():
-    text = request.form["cipher_text"]
-    key = request.form["key"]
+    text = request.form["inputCipherText"]
+    key = request.form["inputKeyCipher"]
 
-    cipher = PlayFairCipher()
-    matrix = cipher.create_playfair_matrix(key)
-    result = cipher.playfair_decrypt(text, matrix)
+    playfair_cipher = PlayFairCipher()
+    playfair_matrix = playfair_cipher.create_playfair_matrix(key)
+    decrypted_text = playfair_cipher.playfair_decrypt(text, playfair_matrix)
 
-    return render_cipher_page("PLAYFAIR CIPHER", "playfair", result, text, key)
+    return render_template(
+        "playfair.html",
+        text=text,
+        key=key,
+        result=decrypted_text
+    )
 
 
 # =========================
-# TRANSPOSITION CIPHER
+# TRANSPOSITION
 # =========================
 
 @app.route("/transposition")
 def transposition():
-    return render_cipher_page("TRANSPOSITION CIPHER", "transposition")
+    return render_template("transposition.html")
 
 
 @app.route("/transposition/encrypt", methods=["POST"])
 def transposition_encrypt():
-    text = request.form["plain_text"]
-    key = int(request.form["key"])
+    text = request.form["inputPlainText"]
+    key = int(request.form["inputKeyPlain"])
 
-    cipher = TranspositionCipher()
-    result = cipher.encrypt(text, key)
+    transposition_cipher = TranspositionCipher()
+    encrypted_text = transposition_cipher.encrypt(text, key)
 
-    return render_cipher_page("TRANSPOSITION CIPHER", "transposition", result, text, key)
+    return render_template(
+        "transposition.html",
+        text=text,
+        key=key,
+        result=encrypted_text
+    )
 
 
 @app.route("/transposition/decrypt", methods=["POST"])
 def transposition_decrypt():
-    text = request.form["cipher_text"]
-    key = int(request.form["key"])
+    text = request.form["inputCipherText"]
+    key = int(request.form["inputKeyCipher"])
 
-    cipher = TranspositionCipher()
-    result = cipher.decrypt(text, key)
+    transposition_cipher = TranspositionCipher()
+    decrypted_text = transposition_cipher.decrypt(text, key)
 
-    return render_cipher_page("TRANSPOSITION CIPHER", "transposition", result, text, key)
+    return render_template(
+        "transposition.html",
+        text=text,
+        key=key,
+        result=decrypted_text
+    )
 
 
 # =========================
