@@ -1,3 +1,4 @@
+import math
 class TranspositionCipher:
     def __init__(self):
         pass
@@ -12,12 +13,20 @@ class TranspositionCipher:
         return encrypted_text
 
     def decrypt(self, text, key):
-        decrypted_text = [''] * key
+        num_cols = math.ceil(len(text) / key)
+        num_rows = key
+        num_empty_cells = (num_cols * num_rows) - len(text)
+
+        decrypted_text = [''] * num_cols
+
         row, col = 0, 0
+
         for symbol in text:
             decrypted_text[col] += symbol
             col += 1
-            if col == key or (col == key - 1 and row >= len(text) % key):
+
+            if col == num_cols or (col == num_cols - 1 and row >= num_rows - num_empty_cells):
                 col = 0
                 row += 1
+
         return ''.join(decrypted_text)
