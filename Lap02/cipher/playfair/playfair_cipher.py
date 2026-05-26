@@ -6,20 +6,19 @@ class PlayFairCipher:
         pass
 
     def create_playfair_matrix(self, key):
-        key = key.replace("J", "I")  # Chuyển "J" thành "I" trong khóa
-        key = key.upper()
-        key_set = set(key)
+        key = key.upper().replace("J", "I")  # Chuyển "J" thành "I" trong khóa
         alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ"
-        remaining_letters = [
-            letter for letter in alphabet if letter not in key_set]
-        matrix = list(key)
+        matrix = []
+        
+        for letter in key:
+            if letter in alphabet and letter not in matrix:
+                matrix.append(letter)
 
-        for letter in remaining_letters:
-            matrix.append(letter)
-            if len(matrix) == 25:
-                break
+        for letter in alphabet:
+            if letter not in matrix:
+                matrix.append(letter)
 
-        playfair_matrix = [matrix[i:i+5] for i in range(0, len(matrix), 5)]
+        playfair_matrix = [matrix[i:i+5] for i in range(0, 25, 5)]
         return playfair_matrix
 
     def find_letter_coords(self, matrix, letter):
@@ -28,16 +27,32 @@ class PlayFairCipher:
                 if matrix[row][col] == letter:
                     return row, col
                 
+    def split_pairs(self, text):
+        text= text.upper().replace("J", "I").replace(" ", "")
+        pairs= []
+        i=0
+        
+        while i <len(text):
+            a= text[i]
+            if i+1 <len(text):
+                b= text[i+1]
+                if a==b:
+                    pairs.append(a+ "X")
+                    i+=1
+                else:
+                    pairs.append(a+b)
+                    i+=2
+            else:
+                pairs.append(a+ "X")
+                i+=1
+        return pairs
+                
     def playfair_encrypt(self, plain_text, matrix):
-        # Chuyển "J" thành "I" trong văn bản đầu vào
-        plain_text = plain_text.replace("J", "I")
-        plain_text = plain_text.upper()
+        pairs = self.split_pairs(plain_text)
         encrypted_text = ""
 
-        for i in range(0, len(plain_text), 2):
-            pair = plain_text[i:i+2]
-            if len(pair) == 1:  # Xử lý nếu số lượng ký tự là lẻ
-                pair += "X"
+        for pair in pairs:
+            
             row1, col1 = self.find_letter_coords(matrix, pair[0])
             row2, col2 = self.find_letter_coords(matrix, pair[1])
 
